@@ -11,12 +11,12 @@
 #include "../Compressor/include/xxhash.h"
 
 class bytecode_encoder_t : public Luau::BytecodeEncoder {
-	__forceinline std::uint8_t encodeOp(const std::uint8_t opcode) {
+	inline std::uint8_t encodeOp(const std::uint8_t opcode) {
 		return (opcode * 227);
 	}
 };
 
-inline std::string compress(std::string_view data) { // Changed variable names to match naming convention.
+inline auto compress(std::string_view data) { // Changed variable names to match naming convention.
 	std::string output{ "RSB1" };
 	std::size_t data_size = data.size();
 	std::size_t max_size = ZSTD_compressBound(data_size);
@@ -26,7 +26,7 @@ inline std::string compress(std::string_view data) { // Changed variable names t
 	output.append(reinterpret_cast<char*>(&data_size), sizeof(data_size));
 	output.append(&compressed[0], compression_size);
 
-	std::uint32_t first_hash = XXH32(&output[0], output.size(), 42U);
+	std::uintptr_t first_hash = XXH32(&output[0], output.size(), 42U);
 	std::uint8_t hashed_bytes[4]{};
 
 	std::memcpy(hashed_bytes, &first_hash, sizeof(first_hash));
@@ -43,7 +43,7 @@ namespace execution {
 		auto bytecode = Luau::compile(script.data(), {}, {}, &encoder);
 		auto compressed_bytecode{ compress(bytecode) };
 
-		if (bytecode.at(0) != 0) {
+		if (!bytecode[0]) {
 			luavm_load(lua_state, &compressed_bytecode, "Maven", 0);
 			task_defer(lua_state);
 			r_decrement_top(lua_state);

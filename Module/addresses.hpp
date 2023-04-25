@@ -5,10 +5,11 @@
 
 #include "offsets.hpp"
 
-__forceinline std::uint32_t rebase(std::uint32_t address) {
-	static std::uint32_t base = reinterpret_cast<std::uint32_t>(GetModuleHandleA(0));
-
-	return ((base - 0x400000) + address);
+template <class func_prototype = std::uintptr_t>
+inline auto aslr(std::uintptr_t address, std::uintptr_t old_base = 0x400000)
+{
+	static const auto new_base = reinterpret_cast<std::uintptr_t>(GetModuleHandleA(0));
+	return func_prototype((address - old_base) + new_base);
 }
 
 /*
@@ -17,8 +18,8 @@ __forceinline std::uint32_t rebase(std::uint32_t address) {
 */
 
 namespace addresses {
-	const std::uint32_t print{}; // Search for string "Video recording started", jump to xref and first call will be the address.
-	const std::uint32_t scheduler{}; // Search for string "SchedulerRate", jump to xref and go into offset that is 2 instructions above - the first call will be the address.
-	const std::uint32_t luavm_load{}; // Search for string "oldResult, moduleRef", jump to xref and second call will be the address.
-	const std::uint32_t task_defer{}; // Error task.defer() and search for string that is threw.
+	const auto print = aslr(0xDEADBEEF); // Search for string "Video recording started", jump to xref and first call will be the address.
+	const auto scheduler = aslr(0xDEADBEEF); // Search for string "SchedulerRate", jump to xref and go into offset that is 2 instructions above - the first call will be the address.
+	const auto luavm_load = aslr(0xDEADBEEF); // Search for string "oldResult, moduleRef", jump to xref and second call will be the address.
+	const auto task_defer = aslr(0xDEADBEEF); // Error task.defer() and search for string that is threw.
 }

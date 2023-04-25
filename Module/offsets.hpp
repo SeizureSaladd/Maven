@@ -4,13 +4,13 @@
 
 namespace offsets {
 	namespace lua_state {
-		const std::uint32_t top{ 20 };
+		const auto top{ 20 };
 	}
 
 	namespace scheduler {
-		const std::uint32_t start{ 308 };
-		const std::uint32_t end{ 312 };
-		const std::uint32_t context{ 304 };
-		const std::uint32_t lua_state{ 308 };
+		const auto start{ 308 };
+		const auto end{ 312 };
+		const auto context{ 304 };
+		const auto lua_state{ 308 };
 	}
 }

@@ -7,7 +7,7 @@
 #include "scheduler/scheduler.hpp"
 #include "execution/execution.hpp"
 
-inline auto main_thread() {
+auto main_thread() {
     console console_window{ "Maven - Bytecode Compressor" };
 
     std::string script = R"(
@@ -20,7 +20,7 @@ inline auto main_thread() {
 	std::cin.get();
 }
 
-int __stdcall DllMain(void*, std::uint32_t reason, void*) {
+int __stdcall DllMain(void*, std::uintptr_t reason, void*) {
     if (reason == DLL_PROCESS_ATTACH)
     {
         system("start https://www.youtube.com/watch?v=pHdoKZkde_4");
